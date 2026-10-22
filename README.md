@@ -59,3 +59,5 @@ brew uninstall kqw8/tools/dusk
 更新时核对源码中的版本、上游提交和源码包 SHA-256，再运行 formula 语法检查与项目测试。不要给安装和测试步骤加服务启动、显示器操作或权限申请。
 
 2026-10-22 已验证：源码包校验一致、Homebrew 能读取 formula、格式检查通过、源码 release 编译成功且版本输出为 `dusk 0.3.0`、46 个项目测试通过。验证只在临时目录中构建；没有运行 `brew install` 或启动服务。
+
+2026-10-22 Inverso 已完成本机迁移：通过 Homebrew 实际安装和 `brew test`，程序 SHA-256 与原安装一致；后台从 `/opt/homebrew/opt/inverso/bin/inverso` 运行，`inverso status` 确认 Scroll event tap 为 enabled、Start at login 为 on。新位置已由用户允许设备控制访问，旧程序及其旧权限条目已移除。Dusk 继续保持未安装。
