@@ -1,12 +1,36 @@
 # 自制工具的 Homebrew tap
 
-当前包含 Dusk 0.3.0 的 formula，固定到上游提交 `f91c413864fb417b2fdf4fb8ad41ced52be3d2c1`，下载时校验 SHA-256。原项目源码保留在 `~/Developer/dusk`。
+当前包含 Dusk 0.3.0 和 Inverso 0.4.0。源码分别保留在 `~/Developer/dusk`、`~/Developer/inverso`。
 
-编译使用 Apple Command Line Tools 自带的 Swift 5.9 或更新版本，不额外安装完整 Xcode、其他 Swift 工具链或第三方运行时。程序运行要求 macOS 13 或更新版本。
+Dusk 固定到上游提交 `f91c413864fb417b2fdf4fb8ad41ced52be3d2c1`，下载时校验 SHA-256；编译使用 Apple Command Line Tools 自带的 Swift 5.9 或更新版本。
 
-这份仓库用于以后分发和安装。本机当前停用 Dusk；编写和验证 tap 不会安装程序、启动后台或修改显示设置。
+Inverso 使用 `Binaries/` 内的 Apple Silicon 安装包，保留本机正常工作的 0.4.0 程序及其原有签名，安装时不引入 Swift 工具链或其他第三方运行依赖。安装包内的 BUILD-INFO.json 记录源码提交及程序 SHA-256。两个工具均要求 macOS 13 或更新版本；目前没有发布远端 tap。
 
-## 以后需要安装时
+## Inverso
+
+注册本地 tap 后安装并管理后台：
+
+```sh
+brew tap kqw8/tools /Users/kw/Developer/homebrew-tools
+brew install kqw8/tools/inverso
+brew services start kqw8/tools/inverso
+inverso status
+```
+
+保留原启动项名称 `com.kqw8.inverso`、Interactive 调度和原日志路径。更新、重启、卸载统一使用 Homebrew：
+
+```sh
+brew upgrade kqw8/tools/inverso
+brew services restart kqw8/tools/inverso
+brew services stop kqw8/tools/inverso
+brew uninstall kqw8/tools/inverso
+```
+
+不要混用 Inverso 自带的 `install/start/stop/uninstall` 管理服务。新版本如果更换程序签名，可能需要重新允许设备控制权限；更新后用 `inverso status` 确认实际后台进程的 Scroll event tap 为 enabled。
+
+## Dusk：当前仅保留源码和打包定义
+
+本机停用 Dusk，不安装或启动它。以后确实需要时：
 
 先把这个目录作为本地 tap 注册（Git 仓库须有提交）：
 
