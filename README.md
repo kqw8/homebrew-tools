@@ -1,3 +1,5 @@
+English | [简体中文](README.zh-CN.md)
+
 # Homebrew Tools
 
 Homebrew formulae for [Inverso](https://github.com/kqw8/inverso) and
@@ -10,9 +12,6 @@ Homebrew formulae for [Inverso](https://github.com/kqw8/inverso) and
 
 Both downloads are SHA-256 verified. The original Inverso archive is retained in
 `Binaries/`; its `BUILD-INFO.json` records the source commit and executable hash.
-
-**Local status: Dusk is not installed or running on this machine.** Its formula
-is retained for future use; the examples below are not a request to enable it.
 
 ## Install and manage
 
