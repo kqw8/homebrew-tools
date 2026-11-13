@@ -21,6 +21,9 @@ brew tap kqw8/tools
 brew install kqw8/tools/inverso
 ```
 
+If Homebrew asks you to trust a third-party formula, review it first, then run
+`brew trust --formula kqw8/tools/inverso` (or `kqw8/tools/dusk`) and retry.
+
 Installation alone does not start a service. To start it now and at login:
 
 ```sh
