@@ -1,7 +1,7 @@
 # Homebrew Tools
 
-Homebrew formulae for Inverso and Dusk. Publication is pending; the commands below
-require the GitHub tap and release asset to be available.
+Homebrew formulae for [Inverso](https://github.com/kqw8/inverso) and
+[Dusk](https://github.com/kqw8/Dusk).
 
 | Tool | Version | Requirements | Package |
 | --- | --- | --- | --- |
