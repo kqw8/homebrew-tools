@@ -1,7 +1,7 @@
 class Inverso < Formula
   desc "Reverse physical mouse-wheel scrolling while preserving trackpad events"
-  homepage "https://github.com/kqw8"
-  url "file://#{Tap.fetch("kqw8/tools").path}/Binaries/inverso-0.4.0-arm64.tar.gz"
+  homepage "https://github.com/kqw8/inverso"
+  url "https://github.com/kqw8/inverso/releases/download/v0.4.0/inverso-0.4.0-arm64.tar.gz"
   version "0.4.0"
   sha256 "62399ed0f33938490fbdd3fa32ce73b102a16f0968cce89cf8f64ed2f45c4588"
   license "MIT"
@@ -28,7 +28,7 @@ class Inverso < Formula
       Manage the background service with `brew services start/stop/restart kqw8/tools/inverso`.
       Do not combine Homebrew services with `inverso install/start/stop/uninstall`.
       `inverso status` remains available for service and event-tap health checks.
-      This local package preserves the working 0.4.0 executable and its signature.
+      This package preserves the working 0.4.0 executable and its signature.
     EOS
   end
 

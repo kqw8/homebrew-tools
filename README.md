@@ -1,63 +1,95 @@
-# 自制工具的 Homebrew tap
+# Homebrew Tools
 
-当前包含 Dusk 0.3.0 和 Inverso 0.4.0。源码分别保留在 `~/Developer/dusk`、`~/Developer/inverso`。
+Homebrew formulae for Inverso and Dusk. Publication is pending; the commands below
+require the GitHub tap and release asset to be available.
 
-Dusk 固定到上游提交 `f91c413864fb417b2fdf4fb8ad41ced52be3d2c1`，下载时校验 SHA-256；编译使用 Apple Command Line Tools 自带的 Swift 5.9 或更新版本。
+| Tool | Version | Requirements | Package |
+| --- | --- | --- | --- |
+| Inverso | 0.4.0 | Apple Silicon (arm64), macOS 13+ | Prebuilt executable with its original signature; no Swift toolchain needed |
+| Dusk | 0.3.0 | macOS 13+, Apple Command Line Tools with Swift 5.9+ | Source build pinned to `f91c413864fb417b2fdf4fb8ad41ced52be3d2c1` |
 
-Inverso 使用 `Binaries/` 内的 Apple Silicon 安装包，保留本机正常工作的 0.4.0 程序及其原有签名，安装时不引入 Swift 工具链或其他第三方运行依赖。安装包内的 BUILD-INFO.json 记录源码提交及程序 SHA-256。两个工具均要求 macOS 13 或更新版本；目前没有发布远端 tap。
+Both downloads are SHA-256 verified. The original Inverso archive is retained in
+`Binaries/`; its `BUILD-INFO.json` records the source commit and executable hash.
 
-## Inverso
+**Local status: Dusk is not installed or running on this machine.** Its formula
+is retained for future use; the examples below are not a request to enable it.
 
-注册本地 tap 后安装并管理后台：
+## Install and manage
 
 ```sh
-brew tap kqw8/tools /Users/kw/Developer/homebrew-tools
+brew tap kqw8/tools
 brew install kqw8/tools/inverso
-brew services start kqw8/tools/inverso
-inverso status
 ```
 
-保留原启动项名称 `com.kqw8.inverso`、Interactive 调度和原日志路径。更新、重启、卸载统一使用 Homebrew：
+Installation alone does not start a service. To start it now and at login:
 
 ```sh
-brew upgrade kqw8/tools/inverso
-brew services restart kqw8/tools/inverso
+brew services start kqw8/tools/inverso
+```
+
+Use Homebrew consistently for updates and service management:
+
+```sh
 brew services stop kqw8/tools/inverso
+brew upgrade kqw8/tools/inverso
+brew services start kqw8/tools/inverso
+```
+
+For Dusk, replace `kqw8/tools/inverso` with `kqw8/tools/dusk` in these commands.
+Run services as your login user, without `sudo`.
+Do not mix Homebrew services with native `inverso install/start/stop/uninstall`
+or `dusk install/start/login/stop/uninstall` commands. Dusk's native service uses
+a different label. `inverso status` is available for health checks; a changed
+executable signature may require the user to grant access again in System Settings.
+
+## Uninstall completely
+
+Stop the selected service first:
+
+```sh
+brew services stop kqw8/tools/inverso
+pgrep -fl -x inverso
+```
+
+Wait until `pgrep` reports no matching processes (exit status 1), and confirm the
+service is stopped with `brew services list`. If a process remains or restarts,
+resolve its service ownership before proceeding. Do not delete a running binary
+or its lock file. Only after confirming process exit:
+
+```sh
 brew uninstall kqw8/tools/inverso
 ```
 
-不要混用 Inverso 自带的 `install/start/stop/uninstall` 管理服务。新版本如果更换程序签名，可能需要重新允许设备控制权限；更新后用 `inverso status` 确认实际后台进程的 Scroll event tap 为 enabled。
+For Dusk, use `brew services stop kqw8/tools/dusk`, check `pgrep -fl -x dusk`
+and `brew services list`, then run `brew uninstall kqw8/tools/dusk` only after
+all Dusk processes have exited. A normal Dusk shutdown restores the built-in display.
 
-## Dusk：当前仅保留源码和打包定义
+Homebrew removes the installed package; user data and logs are not automatically
+deleted. Review these exact paths for optional manual cleanup after shutdown:
 
-本机停用 Dusk，不安装或启动它。以后确实需要时：
+| Tool | Possible leftovers |
+| --- | --- |
+| Inverso | `~/Library/Application Support/Inverso/daemon.lock` |
+| Inverso logs | `~/Library/Logs/inverso.out.log`, `~/Library/Logs/inverso.err.log` |
+| Inverso service | `~/Library/LaunchAgents/com.kqw8.inverso.plist` |
+| Dusk state | `~/Library/Application Support/dusk/state.json` |
+| Dusk Homebrew logs | `$(brew --prefix)/var/log/dusk.log`, `$(brew --prefix)/var/log/dusk.err.log` |
+| Dusk Homebrew service | `~/Library/LaunchAgents/homebrew.mxcl.dusk.plist` |
+| Dusk legacy native service/logs, if previously used | `~/Library/LaunchAgents/com.kqw8.dusk.plist`, `~/Library/Logs/dusk.out.log`, `~/Library/Logs/dusk.err.log` |
 
-先把这个目录作为本地 tap 注册（Git 仓库须有提交）：
+`$(brew --prefix)` denotes your Homebrew prefix. Service plists should normally
+be removed by `brew services stop`; inspect any that remain rather than deleting
+a loaded service's files. Preserve any user data you want to keep. Never delete
+an active `daemon.lock`: removing it can allow multiple daemons to run. Remove it
+only after every Inverso process has exited and its service cannot restart.
 
-```sh
-brew tap kqw8/tools /Users/kw/Developer/homebrew-tools
-brew install kqw8/tools/dusk
-```
+Uninstalling does not revoke macOS TCC permissions. The user must remove any
+remaining Inverso or Dusk authorization entries in **System Settings > Privacy &
+Security**, in the relevant permission categories. No permission-reset or
+automatic user-data deletion commands are provided.
 
-只安装程序不会启动服务。需要登录时启动才运行：
+## Packaging checks
 
-```sh
-brew services start kqw8/tools/dusk
-```
-
-该服务由 Homebrew 管理，不要再调用 Dusk 自带的 `install`、`start`、`login`、`stop` 或 `uninstall` 来管理它；那些命令使用另一套启动项名称。通过 Homebrew 停止服务时，Dusk 会处理退出信号并恢复内屏。
-
-```sh
-brew services stop kqw8/tools/dusk
-brew uninstall kqw8/tools/dusk
-```
-
-本地 tap 是源仓库的克隆。修改打包定义并提交后，可运行 `brew update` 更新克隆。以后发布到 GitHub 时，再把 tap 的远端地址换成发布仓库；目前没有创建或发布远端仓库。
-
-## 维护
-
-更新时核对源码中的版本、上游提交和源码包 SHA-256，再运行 formula 语法检查与项目测试。不要给安装和测试步骤加服务启动、显示器操作或权限申请。
-
-2026-10-22 Dusk 已验证：源码包校验一致、Homebrew 能读取 formula、格式检查通过、源码 release 编译成功且版本输出为 `dusk 0.3.0`、46 个项目测试通过。验证只在临时目录中构建，没有安装或启动 Dusk。
-
-2026-10-22 Inverso 已完成本机迁移：通过 Homebrew 实际安装和 `brew test`，程序 SHA-256 与原安装一致；后台从 `/opt/homebrew/opt/inverso/bin/inverso` 运行，`inverso status` 确认 Scroll event tap 为 enabled、Start at login 为 on。新位置已由用户允许设备控制访问，旧程序及其旧权限条目已移除。Dusk 继续保持未安装。
+Check formula Ruby syntax and Homebrew style before committing. Verify the
+Inverso archive hash without modifying the archive. Packaging checks must not
+start services, change display state, or request permissions.
